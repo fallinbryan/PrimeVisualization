@@ -65,7 +65,7 @@ void myWidget::incrementX(int n)
 void myWidget::paintEvent(QPaintEvent *)
 {
     QPixmap map(this->geometry().right(),this->geometry().bottom());
-    unsigned int grayscale = 0x000000;
+    unsigned int grayscale = 0xffffff;
     unsigned int redscale = 0xff0000;
     QPainter paint(&map);
     QBrush brush(paint.brush());
@@ -76,30 +76,58 @@ void myWidget::paintEvent(QPaintEvent *)
     green_pen.setColor(Qt::green);
     grayScale_pen.setColor(QColor(grayscale));
 
-    brush.setColor(Qt::black);
-    brush.setStyle(Qt::SolidPattern);
-    paint.setBrush(brush);
-    //paint.drawRect(this->geometry());
-    brush.setColor(Qt::black);
-    paint.setBrush(brush);
+//    brush.setColor(Qt::black);
+//    brush.setStyle(Qt::SolidPattern);
+//    paint.setBrush(brush);
+//    paint.drawRect(this->geometry());
+//    brush.setColor(Qt::black);
+//    paint.setBrush(brush);
 
-    for(int x = 1 + offset.x(); x < this->geometry().right()+ offset.x(); x++) {
+    int lastPrime = 2;
+    int distanceToLastPrime = 0;
+    int scale = 5;
+    for(int x = 2 + offset.x(); x < this->geometry().right() + offset.x(); x++) {
 
+        if(isPrime(x)) {
+            grayscale = 0xffffff;
+            grayScale_pen.setColor(QColor(grayscale));
+            paint.setPen(grayScale_pen);
+            distanceToLastPrime = x - lastPrime;
+            paint.drawLine(x -offset.x(),
+                           this->geometry().bottom()* 7/8,
+                           x- offset.x(),
+                           this->geometry().bottom()*7/8 - distanceToLastPrime*scale);
+            lastPrime = x;
+        } else {
+            if(grayscale > 0x0c0c0a) grayscale -= 0x0c0c0a;
 
-        if (isPrime(x) ) {
-             grayscale = 0x000000;
-            //grayscale = 0xbfb137;
-            paint.setPen(grayscale);
-            paint.drawLine(x- offset.x(),0/*this->geometry().bottom()/2*/,x- offset.x(),this->geometry().bottom());
-            //grayscale = 0x000000;
-        }else {
-            //grayscale += 0x111111;
-            grayscale += 0x000011;
-            //qDebug() << grayscale;
-            paint.setPen(grayscale);
-            paint.drawLine(x- offset.x(),0/*this->geometry().bottom()/2*/,x- offset.x(),this->geometry().bottom());
+            grayScale_pen.setColor(QColor(grayscale));
+            paint.setPen(grayScale_pen);
+
+            paint.drawLine(x -offset.x(),
+                           this->geometry().bottom()* 7/8,
+                           x- offset.x(),
+                           this->geometry().bottom()*7/8 - distanceToLastPrime*scale);
         }
+
     }
+
+//        if (isPrime(x) ) {
+//             grayscale = 0x000000;
+//            //grayscale = 0xbfb137;
+//            paint.setPen(grayscale);
+//            paint.drawLine(x- offset.x(),0/*this->geometry().bottom()/2*/,x- offset.x(),this->geometry().bottom());
+//            //grayscale = 0x000000;
+//        }else {
+//            //grayscale += 0x111111;
+//            grayscale += 0x000011;
+//            //qDebug() << grayscale;
+//            paint.setPen(grayscale);
+//            paint.drawLine(x- offset.x(),0/*this->geometry().bottom()/2*/,x- offset.x(),this->geometry().bottom());
+//        }
+//    }
+
+
 //    for(int y = 1; y < this->geometry().bottom(); y++) {
 //        for(int x = 1+ offset.x(); x < this->geometry().right()+ offset.x(); x++) {
 
@@ -146,7 +174,7 @@ myTimer::myTimer(MainWindow *mw)
 
 void myTimer::timerEvent(QTimerEvent *e)
 {
-    app_->ui->drawOnMe->incrementX(20);
+    app_->ui->drawOnMe->incrementX(1);
     app_->ui->drawOnMe->update();
 }
 
